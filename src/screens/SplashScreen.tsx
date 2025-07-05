@@ -6,18 +6,16 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import Animated, { useSharedValue, withSpring } from "react-native-reanimated";
-import { useNavigation, NavigationProp } from "@react-navigation/native";
-
-type RootStackParamList = {
-  Home: undefined;
-  // add other routes here if needed
-};
+import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { RootStackParamList } from "../navigation";
 
 export default function SplashScreen() {
   const ring1padding = useSharedValue(0);
   const ring2padding = useSharedValue(0);
 
-  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
   useEffect(() => {
     ring1padding.value = 0;
@@ -31,7 +29,11 @@ export default function SplashScreen() {
       300
     );
 
-    setTimeout(() => navigation.navigate("Home"), 2500);
+    // Use `replace` to prevent the splash screen from being added to the navigation history.
+    // This means the user won't be able to go back to the splash screen from the Home screen.
+    setTimeout(() => {
+      navigation.replace("Home");
+    }, 2500);
   }, []);
 
   return (
@@ -64,7 +66,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#FBBF24",
+    backgroundColor: "rgba(15, 64, 120, 0.93)",
   },
   ring: {
     backgroundColor: "rgba(255, 255, 255, 0.2)",
