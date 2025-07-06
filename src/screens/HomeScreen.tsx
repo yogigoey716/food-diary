@@ -26,6 +26,16 @@ import Categories from "../components/categories";
 
 function HomeScreen() {
   const [activeCategory, setActiveCategory] = useState("Beef");
+  const [foodList, setFoodList] = useState(foods);
+
+  const filteredFoods = foodList.filter((food) => {
+    if (activeCategory === "All") {
+      return food;
+    } else {
+      return food.category === activeCategory;
+    }
+  });
+
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
@@ -87,7 +97,15 @@ function HomeScreen() {
           setActiveCategory={setActiveCategory}
         />
         {/* Recipes */}
-        <Recipes foods={foods} />
+        {filteredFoods.length === 0 ? (
+          <View style={styles.noRecipesContainer}>
+            <Text style={styles.noRecipesText}>
+              No recipes found for this category.
+            </Text>
+          </View>
+        ) : (
+          <Recipes foods={filteredFoods} />
+        )}
       </ScrollView>
     </SafeAreaView>
   );
@@ -148,6 +166,16 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     borderRadius: 9999,
     padding: hp(1),
+  },
+  noRecipesContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: hp(10),
+  },
+  noRecipesText: {
+    fontSize: hp(2),
+    color: "gray",
   },
 });
 
