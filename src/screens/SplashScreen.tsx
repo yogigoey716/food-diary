@@ -8,7 +8,7 @@ import {
 import Animated, { useSharedValue, withSpring } from "react-native-reanimated";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { RootStackParamList } from "../navigation";
+import { RootStackParamList } from "../types";
 
 export default function SplashScreen() {
   const ring1padding = useSharedValue(0);
@@ -29,8 +29,6 @@ export default function SplashScreen() {
       300
     );
 
-    // Use `replace` to prevent the splash screen from being added to the navigation history.
-    // This means the user won't be able to go back to the splash screen from the Home screen.
     setTimeout(() => {
       navigation.replace("Home");
     }, 2500);
@@ -54,7 +52,7 @@ export default function SplashScreen() {
 
       {/* title and punchline */}
       <View style={styles.textContainer}>
-        <Text style={styles.title}>Foodie</Text>
+        <Text style={styles.title}>Food Diary</Text>
         <Text style={styles.subtitle}>your food recipe app</Text>
       </View>
     </View>

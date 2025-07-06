@@ -4,9 +4,9 @@ import {
   Text,
   View,
   Image,
-  ScrollView,
   TextInput,
   TouchableOpacity,
+  FlatList,
 } from "react-native";
 import {
   widthPercentageToDP as wp,
@@ -19,9 +19,9 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 import categoriesData from "../data/categories";
 import foods from "../data/foods";
-import { RootStackParamList } from "../types";
-import Recipes from "../components/recipes";
+import { Food, RootStackParamList } from "../types";
 import Categories from "../components/categories";
+import RecipeCard from "../components/RecipeCard";
 
 const allCategories = [
   {
@@ -57,74 +57,87 @@ function HomeScreen() {
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
+  const renderListHeader = () => (
+    <View>
+      {/* Header with Avatar and Bell Icon */}
+      <View style={styles.headerContainer}>
+        <Image
+          source={{
+            uri: "https://cdn.pixabay.com/photo/2017/02/23/13/05/avatar-2092113_1280.png",
+          }}
+          style={styles.avatar}
+        />
+        <View style={styles.headerIcons}>
+          <TouchableOpacity onPress={() => navigation.navigate("Favorites")}>
+            <Feather name="heart" size={hp(4)} color="#4A5568" />
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => navigation.navigate("MyRecipes")}
+            style={{ marginLeft: wp(4) }}
+          >
+            <Feather name="book-open" size={hp(4)} color="#4A5568" />
+          </TouchableOpacity>
+        </View>
+      </View>
+
+      {/* Punchline and Title */}
+      <View style={styles.punchlineContainer}>
+        <Text style={styles.punchlineText}>Hello, User</Text>
+        <View>
+          <Text style={styles.titleText}>Make your own food,</Text>
+          <Text style={styles.titleText}>
+            stay at <Text style={styles.highlightedText}>home</Text>
+          </Text>
+        </View>
+      </View>
+
+      {/* Search Bar */}
+      <View style={styles.searchContainer}>
+        <TextInput
+          placeholder="Search any recipe"
+          placeholderTextColor={"gray"}
+          style={styles.searchInput}
+          value={searchQuery}
+          onChangeText={setSearchQuery}
+        />
+        <View style={styles.searchIconContainer}>
+          <Feather name="search" size={hp(2.5)} color="gray" />
+        </View>
+      </View>
+
+      {/* Categories */}
+      <Categories
+        categories={allCategories}
+        activeCategory={activeCategory}
+        setActiveCategory={setActiveCategory}
+      />
+
+      {/* Recipes Title */}
+      <View style={styles.recipesContainer}>
+        <Text style={styles.recipesTitle}>Recipes</Text>
+      </View>
+    </View>
+  );
+
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView
+      <FlatList
+        data={filteredFoods}
+        numColumns={2}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 50 }}
-        style={styles.scrollView}
-      >
-        {/* Header with Avatar and Bell Icon */}
-        <View style={styles.headerContainer}>
-          <Image
-            source={{
-              uri: "https://cdn.pixabay.com/photo/2017/02/23/13/05/avatar-2092113_1280.png",
-            }}
-            style={styles.avatar}
-          />
-          <View style={styles.headerIcons}>
-            <TouchableOpacity onPress={() => navigation.navigate("Favorites")}>
-              <Feather name="heart" size={hp(4)} color="#4A5568" />
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => navigation.navigate("MyRecipes")}
-              style={{ marginLeft: wp(4) }}
-            >
-              <Feather name="book-open" size={hp(4)} color="#4A5568" />
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        {/* Punchline and Title */}
-        <View style={styles.punchlineContainer}>
-          <Text style={styles.punchlineText}>Hello, User</Text>
-          <View>
-            <Text style={styles.titleText}>Make your own food,</Text>
-            <Text style={styles.titleText}>
-              stay at <Text style={styles.highlightedText}>home</Text>
-            </Text>
-          </View>
-        </View>
-
-        {/* Search Bar */}
-        <View style={styles.searchContainer}>
-          <TextInput
-            placeholder="Search any recipe"
-            placeholderTextColor={"gray"}
-            style={styles.searchInput}
-            value={searchQuery}
-            onChangeText={setSearchQuery}
-          />
-          <View style={styles.searchIconContainer}>
-            <Feather name="search" size={hp(2.5)} color="gray" />
-          </View>
-        </View>
-
-        {/* Categories */}
-        <Categories
-          categories={allCategories}
-          activeCategory={activeCategory}
-          setActiveCategory={setActiveCategory}
-        />
-        {/* Recipes */}
-        {filteredFoods.length === 0 ? (
+        keyExtractor={(item: Food) => item.recipeId}
+        ListHeaderComponent={renderListHeader}
+        renderItem={({ item, index }) => (
+          <RecipeCard item={item} index={index} />
+        )}
+        ListEmptyComponent={
           <View style={styles.noRecipesContainer}>
             <Text style={styles.noRecipesText}>No recipes found.</Text>
           </View>
-        ) : (
-          <Recipes foods={filteredFoods} />
-        )}
-      </ScrollView>
+        }
+        contentContainerStyle={styles.listContentContainer}
+        columnWrapperStyle={{ justifyContent: "space-between" }}
+      />
     </SafeAreaView>
   );
 }
@@ -134,8 +147,9 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
   },
-  scrollView: {
+  listContentContainer: {
     paddingHorizontal: wp(4),
+    paddingBottom: 50,
   },
   headerContainer: {
     flexDirection: "row",
@@ -194,6 +208,15 @@ const styles = StyleSheet.create({
   noRecipesText: {
     fontSize: hp(2),
     color: "gray",
+  },
+  recipesContainer: {
+    marginTop: hp(4),
+  },
+  recipesTitle: {
+    fontSize: hp(3),
+    fontWeight: "bold",
+    color: "#4A5568",
+    marginBottom: hp(2),
   },
 });
 

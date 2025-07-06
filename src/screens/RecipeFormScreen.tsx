@@ -32,7 +32,6 @@ export default function RecipeFormScreen() {
   const [ingredients, setIngredients] = useState("");
   const [instructions, setInstructions] = useState("");
 
-  // Best Practice: Initialize state with existing recipe data if editing.
   React.useEffect(() => {
     if (foodToEdit) {
       setRecipeName(foodToEdit.recipeName);
@@ -56,7 +55,6 @@ export default function RecipeFormScreen() {
       return;
     }
 
-    // Best Practice: Parse ingredients from a simple format.
     // Here we assume "1 cup, Sugar" format, one per line.
     const ingredientsArray: Ingredient[] = ingredients
       .split("\n")
@@ -70,7 +68,6 @@ export default function RecipeFormScreen() {
       });
 
     try {
-      // Best Practice: Store related data under a single key.
       const existingRecipesJson = await AsyncStorage.getItem(MY_RECIPES_KEY);
       const existingRecipes: Food[] = existingRecipesJson
         ? JSON.parse(existingRecipesJson)
@@ -79,7 +76,6 @@ export default function RecipeFormScreen() {
       let updatedRecipes: Food[];
 
       if (foodToEdit) {
-        // Edit mode: find and update the existing recipe
         updatedRecipes = existingRecipes.map((recipe) => {
           if (recipe.recipeId === foodToEdit.recipeId) {
             return {
@@ -96,17 +92,15 @@ export default function RecipeFormScreen() {
           return recipe;
         });
       } else {
-        // Create mode: add a new recipe
         const newRecipe: Food = {
-          recipeId: `custom_${Date.now()}`, // Best Practice: Generate a unique ID.
+          recipeId: `custom_${Date.now()}`,
           recipeName,
           recipeImage:
             recipeImage ||
-            "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=1780&auto=format&fit=crop", // Default image
+            "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=1780&auto=format&fit=crop",
           cookingDescription,
           recipeInstructions: instructions,
           ingredients: ingredientsArray,
-          // Fill in other required fields with default/empty values
           category: "Custom",
           idFood: `custom_${Date.now()}`,
           idCategory: "custom",
@@ -144,7 +138,8 @@ export default function RecipeFormScreen() {
           </TouchableOpacity>
           <Text style={styles.headerTitle}>
             {foodToEdit ? "Edit Recipe" : "Add New Recipe"}
-          </Text>{" "}
+          </Text>
+
           <View style={{ width: hp(3.5) }} />
         </View>
 
@@ -203,7 +198,7 @@ export default function RecipeFormScreen() {
           >
             <Text style={styles.saveButtonText}>
               {foodToEdit ? "Update Recipe" : "Save Recipe"}
-            </Text>{" "}
+            </Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
