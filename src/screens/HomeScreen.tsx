@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import {
   StyleSheet,
   Text,
@@ -17,25 +17,43 @@ import { Feather } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
-// Import data and types
-import categories from "../data/categories";
+import categoriesData from "../data/categories";
 import foods from "../data/foods";
 import { RootStackParamList } from "../types";
 import Recipes from "../components/recipes";
 import Categories from "../components/categories";
 
+const allCategories = [
+  {
+    idCategory: "0",
+    strCategory: "All",
+    strCategoryThumb:
+      "https://www.themealdb.com/images/media/meals/llcbn01574260722.jpg",
+  },
+  ...categoriesData,
+];
+
 function HomeScreen() {
-  const [activeCategory, setActiveCategory] = useState("Beef");
-  const [foodList, setFoodList] = useState(foods);
+  const [activeCategory, setActiveCategory] = useState("All");
+  const [searchQuery, setSearchQuery] = useState("");
 
-  const filteredFoods = foodList.filter((food) => {
-    if (activeCategory === "All") {
-      return food;
-    } else {
-      return food.category === activeCategory;
+  const filteredFoods = useMemo(() => {
+    let filtered = foods;
+
+    // 1. Filter by the active category
+    if (activeCategory !== "All") {
+      filtered = filtered.filter((food) => food.category === activeCategory);
     }
-  });
 
+    // 2. Filter by the search query
+    if (searchQuery.trim() !== "") {
+      filtered = filtered.filter((food) =>
+        food.recipeName.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
+
+    return filtered;
+  }, [activeCategory, searchQuery]);
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
@@ -84,6 +102,8 @@ function HomeScreen() {
             placeholder="Search any recipe"
             placeholderTextColor={"gray"}
             style={styles.searchInput}
+            value={searchQuery}
+            onChangeText={setSearchQuery}
           />
           <View style={styles.searchIconContainer}>
             <Feather name="search" size={hp(2.5)} color="gray" />
@@ -92,16 +112,14 @@ function HomeScreen() {
 
         {/* Categories */}
         <Categories
-          categories={categories}
+          categories={allCategories}
           activeCategory={activeCategory}
           setActiveCategory={setActiveCategory}
         />
         {/* Recipes */}
         {filteredFoods.length === 0 ? (
           <View style={styles.noRecipesContainer}>
-            <Text style={styles.noRecipesText}>
-              No recipes found for this category.
-            </Text>
+            <Text style={styles.noRecipesText}>No recipes found.</Text>
           </View>
         ) : (
           <Recipes foods={filteredFoods} />
