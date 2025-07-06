@@ -6,7 +6,7 @@ export interface Ingredient {
 export type RootStackParamList = {
   Welcome: undefined;
   Home: undefined;
-  RecipeDetail: { recipeId: string };
+  RecipeDetail: { food: Food };
   Favorites: undefined;
   MyRecipes: undefined;
 };

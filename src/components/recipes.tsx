@@ -25,9 +25,7 @@ const RecipeCard = ({ item, index }: { item: Food; index: number }) => {
         styles.recipeCard,
         { paddingLeft: isEven ? 0 : 8, paddingRight: isEven ? 8 : 0 },
       ]}
-      onPress={() =>
-        navigation.navigate("RecipeDetail", { recipeId: item.recipeId })
-      }
+      onPress={() => navigation.navigate("RecipeDetail", { food: item })}
     >
       <Image
         source={{ uri: item.recipeImage }}
