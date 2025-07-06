@@ -8,6 +8,7 @@ import SplashScreen from "../screens/SplashScreen";
 import FavoriteScreen from "../screens/FavoriteScreen";
 import MyRecipeScreen from "../screens/MyRecipeScreen";
 import RecipeDetailScreen from "../screens/RecipeDetailScreen";
+import RecipeFormScreen from "../screens/RecipeFormScreen";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -23,6 +24,7 @@ function AppNavigation() {
         <Stack.Screen name="RecipeDetail" component={RecipeDetailScreen} />
         <Stack.Screen name="Favorites" component={FavoriteScreen} />
         <Stack.Screen name="MyRecipes" component={MyRecipeScreen} />
+        <Stack.Screen name="RecipeForm" component={RecipeFormScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -9,6 +9,7 @@ export type RootStackParamList = {
   RecipeDetail: { food: Food };
   Favorites: undefined;
   MyRecipes: undefined;
+  RecipeForm: { foodToEdit?: Food };
 };
 
 export interface Food {
